@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CMS.API.Campaign.WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:CMS.API.Campaign.WebApi.Controllers.SlotController">
+            <summary>
+            slot api for campaigns
+            </summary>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Controllers.SlotController.#ctor(CMS.API.Campaign.Infrastructure.Metric.IMetricClient,CMS.API.Campaign.Application.Services.ISlotService)">
+            <summary>
+            initialize
+            </summary>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Controllers.SlotController.GetSlots(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Get campaigns for one slot with conditions
+            </summary>
+            <param name="platform">Required, Should be one of "website, mobile, app"</param>
+            <param name="location">Required, Location of Slot, Example: HomepageCategory</param>
+            <param name="language">Required, Language Code, Example: en-US</param>
+            <param name="country">Required, Country Code, Example : US</param>
+            <param name="categoryId">Optional, Category Code, Example : Pets</param>
+            <param name="promoId">Optional, Promote ID, Example: 070819WD10915</param>
+            <param name="store">Optional, default value is iHerb</param>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Controllers.SlotController.GetPreviewSlots(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Get Preview Slots
+            </summary>
+        </member>
+        <member name="T:CMS.API.Campaign.WebApi.Program">
+            <summary>
+            main class
+            </summary>
+        </member>
+        <member name="P:CMS.API.Campaign.WebApi.Program.Metrics">
+            <summary>
+            metrics
+            </summary>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Program.Main(System.String[])">
+            <summary>
+            main point
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Program.CreateWebHostBuilder(System.String[])">
+            <summary>
+            start up
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CMS.API.Campaign.WebApi.Startup">
+            <summary>
+            start up
+            </summary>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            initialize
+            </summary>
+        </member>
+        <member name="P:CMS.API.Campaign.WebApi.Startup.Configuration">
+            <summary>
+            config
+            </summary>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+        </member>
+        <member name="M:CMS.API.Campaign.WebApi.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+        </member>
+    </members>
+</doc>

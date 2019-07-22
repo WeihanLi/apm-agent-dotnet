@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.ingress.additional_annotations }}
+    {{ $key }}: {{ $val | quote}}
+    {{- end }}
+  labels:
+    app: {{ .Values.app_name }}
+    release: {{ .Release.Name }}
+    revision: {{ .Release.Revision | quote }}
+    umbrella: {{ .Values.umbrella_name }}
+  name: {{ .Values.app_name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  rules:
+  {{- range .Values.ingress.rules }}
+  - host: "{{ .host }}"
+    http:
+      paths:
+      {{- range .backends }}
+      - backend:
+          serviceName: {{ $.Values.app_name }}
+          servicePort: {{ .port | default 80 }}
+        path: {{ .path }}
+      {{- end }}
+  {{- end }}
+  {{ if .Values.ingress.secrets }}
+  tls:
+  {{- range .Values.ingress.secrets }}
+  - hosts:
+    - "{{ .host }}"
+    secretName: {{ .secret }}
+  {{- end }}
+  {{ end }}

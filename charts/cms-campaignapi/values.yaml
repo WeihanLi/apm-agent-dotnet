@@ -1,0 +1,65 @@
+umbrella_name: cms
+app_name: cms-campaignapi
+namespace: cms
+
+deployment:
+  progress_deadline_seconds: 600
+  replicas: 1
+  image:
+    pull_policy: IfNotPresent
+    pull_secret: hs-reg-iherb-net-svc-k8sdeploy-hs
+  http:
+    port: 80
+    container_port: 80
+  liveness:
+    failure_threshold: 3
+    path: /api/HealthCheck
+    initial_delay_seconds: 60
+    period_seconds: 60
+    success_threshold: 1
+    timeout_seconds: 1
+  readiness:
+    failure_threshold: 3
+    path: /api/HealthCheck
+    initial_delay_seconds: 60
+    period_seconds: 60
+    success_threshold: 1
+    timeout_seconds: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 300Mi
+    requests:
+      cpu: 100m
+      memory: 300Mi
+  
+service:
+  type: ClusterIP
+  port: 80
+  container_port: 80
+  session_affinity: None
+
+hpa:
+  min: 1
+  max: 1
+  kind: Deployment
+  cpu_utilization: 80
+  
+ingress:
+  rules:
+    - host: campaign.internal.iherbtest.cn
+      backends:
+        - path: /
+  secrets:
+    - host: campaign.internal.iherbtest.cn
+      secret: ssl-iherbtest-cn
+
+secret:
+  create: true
+  data:
+    Secret__Test: SecretTest
+  
+configmap:
+  data:
+    RedisConfig__ConnectionString: cms-redis-slave:6379
+    RedisConfig__Source: CMSKeys

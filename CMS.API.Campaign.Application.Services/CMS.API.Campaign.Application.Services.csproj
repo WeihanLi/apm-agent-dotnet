@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CMS.API.Campaign.Application\CMS.API.Campaign.Application.csproj" />
+    <ProjectReference Include="..\CMS.API.Campaign.Domain\CMS.API.Campaign.Domain.csproj" />
+    <ProjectReference Include="..\CMS.API.Campaign.Infrastructure\CMS.API.Campaign.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,116 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.app_name }}
+    release: {{ .Release.Name }}
+    revision: {{ .Release.Revision | quote }}
+    umbrella: {{ .Values.umbrella_name }}
+  name: {{ .Values.app_name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  revisionHistoryLimit: {{ .Values.revision_history_limit }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app_name }}
+  progressDeadlineSeconds: {{ .Values.deployment.progress_deadline_seconds }}
+  replicas: {{ .Values.deployment.replicas }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app_name }}
+        release: {{ .Release.Name }}
+        revision: {{ .Release.Revision | quote }}
+        umbrella: {{ .Values.umbrella_name }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ .Values.app_name }}
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - name: {{ .Values.app_name }}
+        ports:
+        - containerPort: {{ .Values.deployment.http.container_port }}
+{{- with .Values.deployment.image }}
+        image: {{ .name }}
+        imagePullPolicy: {{ .pull_policy }}
+{{- end }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.app_name }}
+        - secretRef:
+            name: {{ .Values.app_name }}
+{{- $http_port := .Values.deployment.http.container_port }}
+{{- with .Values.deployment.liveness }}
+        livenessProbe:
+          failureThreshold: {{ .failure_threshold }}
+          {{- if .path }}
+          httpGet:
+            path: {{ .path }}
+            port: {{ $http_port }}
+            scheme: HTTP
+          {{- end }}
+          {{- if .commands }}
+          exec:
+            command:
+            {{- range .commands }}
+            - {{ .command }}
+            {{- end }}
+          {{- end }}
+          initialDelaySeconds: {{ .initial_delay_seconds }}
+          periodSeconds: {{ .period_seconds }}
+          successThreshold: {{ .success_threshold }}
+          timeoutSeconds: {{ .timeout_seconds }}
+{{- end }}
+{{- with .Values.deployment.readiness }}
+        readinessProbe:
+          failureThreshold: {{ .failure_threshold }}
+          {{- if .path }}
+          httpGet:
+            path: {{ .path }}
+            port: {{ $http_port }}
+            scheme: HTTP
+          {{- end }}
+          {{- if .commands }}
+          exec:
+            command:
+            {{- range .commands }}
+            - {{ .command }}
+            {{- end }}
+          {{- end }}
+          initialDelaySeconds: {{ .initial_delay_seconds }}
+          periodSeconds: {{ .period_seconds }}
+          successThreshold: {{ .success_threshold }}
+          timeoutSeconds: {{ .timeout_seconds }}
+{{- end }}
+{{- with .Values.deployment.resources }}
+        resources:
+          limits:
+            cpu: {{ .limits.cpu }}
+            memory: {{ .limits.memory }}
+          requests:
+            cpu: {{ .requests.cpu }}
+            memory: {{ .requests.memory }}
+{{- end }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: {{ .Values.deployment.image.pull_secret }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

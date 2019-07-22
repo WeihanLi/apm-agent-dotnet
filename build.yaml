@@ -1,0 +1,23 @@
+## Definitions
+##CI pipeline is nothing but a Jenkins job, type of Jenkins pipeline. It doesn't know any business logic of how a service is going to compile & test. It's more like a generic pipeline, which accepts list of task definition and perform them one by one.
+##Each build.yaml is combined with several sub-tasks,
+
+---
+name: cms.api.campaign
+kind: service
+tasks:
+ ##- **artifacts**: Declares the build artifacts (e.g. `Docker` images and `NPM` packages). This task can be defined multiple times with different `kind`. Refer spec for details.
+ ## custom ${BUILD_NUMBER} ${COMMIT_ID} for tag use
+  - name: artifacts
+    kind: Docker
+    images:
+      - name: cms-campaignapi
+        path: "CMS.API.Campaign.WebApi"  
+        
+ ##- **helmChart**: set the charts for each docker image.
+  - name: helmChart
+    kind: helmpush
+    charts:
+      - name: cms-campaignapi
+        path: ./charts/cms-campaignapi
+        image: cms-campaignapi      
