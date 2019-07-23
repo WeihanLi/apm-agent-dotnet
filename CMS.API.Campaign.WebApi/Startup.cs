@@ -14,6 +14,7 @@ using System.IO.Compression;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.API.Campaign.WebApi
 {
@@ -40,46 +41,11 @@ namespace CMS.API.Campaign.WebApi
         /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
-            //configure
-            services.Configure<RedisConfig>(Configuration.GetSection("RedisConfig"));
-            services.Configure<SlotImageConfig>(Configuration.GetSection("SlotImageConfig"));
-            services.Configure<GzipCompressionProviderOptions>(options =>
-            {
-                options.Level = CompressionLevel.Optimal;
-            });
-            //application
-            services.AddSingleton<ISlotService, SlotService>();
-
-            //repository
-            services.AddSingleton<ISlotRepository, SlotRepository>();
-
-            //infrastructure
-            services.AddSingleton<IRedisAccess, RedisAccess>();
-            //middleware
-            services.AddMemoryCache();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "iHerb CMS Campaign Api", Version = "v1" });
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, "Xml/CMS.API.Campaign.WebApi.xml");
-                c.IncludeXmlComments(xmlPath);
-            });
-
-            services.AddResponseCompression(options =>
-            {
-                options.EnableForHttps = true;
-                options.Providers.Add<GzipCompressionProvider>();
-            });
-
-            services.AddMvc();
-            services.AddResponseCaching();
-
-            var hcBuilder = services.AddHealthChecks();
-
-            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
-
-            //metric
-            services.AddSingleton<IMetricClient, MetricClient>();
-            services.AddMetrics();
+            services.AddCustomMvc(Configuration)
+                .AddHealthChecks(Configuration)
+                .AddCustomSwagger(Configuration)
+                .AddSettingsConfiguration(Configuration)
+                .AddCustomConfiguration(Configuration);
         }
 
         /// <summary>
@@ -92,7 +58,7 @@ namespace CMS.API.Campaign.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHealthChecks("/api/home/index", new HealthCheckOptions
+            app.UseHealthChecks("/api/HealthCheck", new HealthCheckOptions
             {
                 Predicate = r => r.Name.Contains("self")
             });
@@ -101,6 +67,81 @@ namespace CMS.API.Campaign.WebApi
             app.UseResponseCompression();
             app.UseMvc();
             app.UseResponseCaching();
+        }
+    }
+
+    internal static class CustomExtensionsMethods
+    {
+        public static IServiceCollection AddCustomMvc(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddControllersAsServices();
+            services.AddMemoryCache();
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+
+            services.AddResponseCaching();
+            services.AddMetrics();
+
+            return services;
+        }
+
+        public static IServiceCollection AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            var hcBuilder = services.AddHealthChecks();
+            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomSwagger(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddSwaggerGen(options =>
+            {
+                options.DescribeAllEnumsAsStrings();
+                options.SwaggerDoc("v1", new Info
+                {
+                    Title = "iHerb CMS Campaign Api",
+                    Version = "v1",
+                    Description = "The CMS Campaign http api for web/mobile/app",
+                    TermsOfService = "Terms Of Service"
+                });
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, "Xml/CMS.API.Campaign.WebApi.xml");
+                options.IncludeXmlComments(xmlPath);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomConfiguration(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddOptions();
+            services.AddSingleton<ISlotService, SlotService>();
+            services.AddSingleton<ISlotRepository, SlotRepository>();
+            services.AddSingleton<IRedisAccess, RedisAccess>();
+            services.AddSingleton<IMetricClient, MetricClient>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSettingsConfiguration(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.Configure<RedisConfig>(configuration.GetSection("RedisConfig"));
+            services.Configure<SlotImageConfig>(configuration.GetSection("SlotImageConfig"));
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Optimal;
+            });
+
+            return services;
         }
     }
 }
