@@ -62,4 +62,3 @@ secret:
 configmap:
   data:
     RedisConfig__ConnectionString: cms-redis-slave:6379
-    RedisConfig__Source: CMSKeys
