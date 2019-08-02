@@ -1,6 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    {{- range $key, $val := .Values.service.additional_annotations }}
+    {{ $key }}: {{ $val | quote}}
+    {{- end }}
   labels:
     app: {{ .Values.app_name }}
     release: {{ .Release.Name }}
@@ -12,10 +16,16 @@ spec:
 {{- with .Values.service }}
   type: {{ .type }}
   sessionAffinity: {{ .session_affinity }}
+  {{ if .loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: 
+    {{- range .loadBalancerSourceRanges }}
+    - {{ . | title | quote }}
+    {{- end }}
+  {{ end }}
 {{- end }}
 {{- with .Values.service }}
   ports:
-  - name: http
+  - name: {{ .name }}
     port: {{ .port }}
     protocol: TCP
     targetPort: {{ .container_port }}

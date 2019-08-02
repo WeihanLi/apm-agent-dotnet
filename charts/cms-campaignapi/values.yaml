@@ -32,12 +32,6 @@ deployment:
     requests:
       cpu: 100m
       memory: 300Mi
-  
-service:
-  type: ClusterIP
-  port: 80
-  container_port: 80
-  session_affinity: None
 
 hpa:
   min: 1
@@ -45,7 +39,15 @@ hpa:
   kind: Deployment
   cpu_utilization: 80
   
+service:
+  type: ClusterIP
+  name: http
+  port: 80
+  container_port: 80
+  session_affinity: None
+  
 ingress:
+  create: true
   rules:
     - host: campaign.internal.iherbtest.cn
       backends:
@@ -53,6 +55,9 @@ ingress:
   secrets:
     - host: campaign.internal.iherbtest.cn
       secret: ssl-iherbtest-cn
+
+monitor:
+  create: false
 
 secret:
   create: true
