@@ -24,5 +24,17 @@ namespace CMS.API.Campaign.Infrastructure.Metric
             var option = MetricsRegistry.BuildCounterOptions(name);
             _metric.Measure.Counter.Increment(option);
         }
+
+        public void Histogram(string name, long value)
+        {
+            var option = MetricsRegistry.BuildHistogramOptions(name);
+            _metric.Measure.Histogram.Update(option, value);
+        }
+
+        public void Meter(string name)
+        {
+            var option = MetricsRegistry.BuildMeterOptions(name);
+            _metric.Measure.Meter.Mark(option);
+        }
     }
 }

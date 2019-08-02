@@ -57,7 +57,24 @@ ingress:
       secret: ssl-iherbtest-cn
 
 monitor:
-  create: false
+  create: true
+
+prometheusrule:
+  create: true
+  rules:
+    - alert: EndpointResponseTime
+      annotations:
+        summary: ""
+        message: calculate response time is above 5s
+        runbook_url: ""
+        dashboard_url: ""
+      expr: >
+        min(avg_over_time(application_httprequests_transactions_per_endpoint{app="CMS.API.Campaign.WebApi",quantile="0.99"}[1m]))
+        > 5
+      for: 5m
+      labels:
+        severity: warning
+        opsgenie_priority: P5
 
 secret:
   create: true
