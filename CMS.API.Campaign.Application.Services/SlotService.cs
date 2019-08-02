@@ -1,10 +1,9 @@
 ﻿using CMS.API.Campaign.Application.Models;
 using CMS.API.Campaign.Domain.Repositories;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using Microsoft.Extensions.Options;
 
 namespace CMS.API.Campaign.Application.Services
 {
@@ -84,19 +83,18 @@ namespace CMS.API.Campaign.Application.Services
 
             if (countrySpecific.Contains(','))
             {
-                return countrySpecific.Replace(" ","").Split(',').Where(spe => !string.IsNullOrEmpty(spe)).Any(spe =>
+                return countrySpecific.Replace(" ", "").Split(',').Where(spe => !string.IsNullOrEmpty(spe)).Any(spe =>
                     spe.Equals(country, StringComparison.CurrentCultureIgnoreCase));
             }
 
             return countrySpecific.Equals(country, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        private static string UtcTime2PstTime(string utcTime)
+        private static string UtcTime2PstTime(DateTime utcTime)
         {
-            if (string.IsNullOrEmpty(utcTime))
-                return string.Empty;
-            var tmpExact = DateTime.ParseExact(utcTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-            return new DateTimeOffset(tmpExact, TimeSpan.FromHours(7)).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            var utc = TimeZoneInfo.ConvertTimeToUtc(utcTime, TimeZoneInfo.Utc);
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, "Pacific Standard Time")
+                .ToString("yyyy-MM-dd HH:mm:ss");
         }
     }
 }
