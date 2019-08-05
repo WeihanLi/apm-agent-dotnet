@@ -3,6 +3,7 @@ using CMS.API.Campaign.Domain.Repositories;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace CMS.API.Campaign.Application.Services
@@ -92,7 +93,9 @@ namespace CMS.API.Campaign.Application.Services
 
         private static string UtcTime2PstTime(DateTime utcTime)
         {
-            var utc = TimeZoneInfo.ConvertTimeToUtc(utcTime, TimeZoneInfo.Utc);
+            var tmpExact = DateTime.ParseExact(utcTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+                "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            var utc = TimeZoneInfo.ConvertTimeToUtc(tmpExact, TimeZoneInfo.Utc);
             return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, "Pacific Standard Time")
                 .ToString("yyyy-MM-dd HH:mm:ss");
         }

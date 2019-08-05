@@ -1,4 +1,5 @@
-﻿using CMS.API.Campaign.Application.Models;
+﻿using System;
+using CMS.API.Campaign.Application.Models;
 using CMS.API.Campaign.Application.Services;
 using CMS.API.Campaign.Domain.Entities;
 using CMS.API.Campaign.Domain.Repositories;
@@ -18,30 +19,36 @@ namespace CMS.API.Campaign.UnitTests.Services
             var slotRepository = new Mock<ISlotRepository>();
 
             slotRepository
-                .Setup(x => x.GetSlots(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), false))
+                .Setup(x => x.GetSlots(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                    false))
                 .Returns(new List<SlotEntity>()
                 {
                     new SlotEntity()
                     {
-                        Id=1, Title="test1", CountryExclude="UK,AU,", CountrySpecific="Global", LandingUrl="/c", HtmlLayout="<div><img src=https://s3.images-iherb.com/cms/banners/suspbanner0605.jpg /></div>"
+                        Id = 1, Title = "test1", CountryExclude = "UK,AU,", CountrySpecific = "Global",
+                        LandingUrl = "/c",
+                        HtmlLayout = "<div><img src=https://s3.images-iherb.com/cms/banners/suspbanner0605.jpg /></div>"
                     },
                     new SlotEntity
                     {
-                        Id=2, Title="test2", CountryExclude="", CountrySpecific="US,CN, AU", AltText="big sell", EndDate="2019-09-01 22:00:00"
+                        Id = 2, Title = "test2", CountryExclude = "", CountrySpecific = "US,CN, AU",
+                        AltText = "big sell", EndDate = DateTime.Parse("2019-09-01 22:00:00")
                     }
                 });
-            _slotService = new SlotService(slotRepository.Object, new OptionsWrapper<SlotImageConfig>(new SlotImageConfig()
-            {
-                DefaultHeader= "https://s3.images-iherb.com", ChinaHeader= "https://s3.iherb.cn"
-            }));
+            _slotService = new SlotService(slotRepository.Object, new OptionsWrapper<SlotImageConfig>(
+                new SlotImageConfig()
+                {
+                    DefaultHeader = "https://s3.images-iherb.com", ChinaHeader = "https://s3.iherb.cn"
+                }));
         }
 
         [Fact]
         public void GetSlots_Test()
         {
-            var res = _slotService.GetSlots("website", "homePagePromo", "US", "en-US","","","iHerb");
+            var res = _slotService.GetSlots("website", "homePagePromo", "US", "en-US", "", "", "iHerb");
 
-            Assert.Equal("<div><img src=https://s3.images-iherb.com/cms/banners/suspbanner0605.jpg /></div>", res[0].HtmlLayout);
+            Assert.Equal("<div><img src=https://s3.images-iherb.com/cms/banners/suspbanner0605.jpg /></div>",
+                res[0].HtmlLayout);
             Assert.Null(res[1].HtmlLayout);
         }
 
@@ -49,8 +56,9 @@ namespace CMS.API.Campaign.UnitTests.Services
         public void GetSlots_Test2()
         {
             var res = _slotService.GetSlots("website", "homePagePromo", "CN", "cn-ZH", "", "", "iHerb");
-            
-            Assert.Equal("<div><img src=https://s3.iherb.cn/cms/banners/suspbanner0605.jpg /></div>", res[0].HtmlLayout);
+
+            Assert.Equal("<div><img src=https://s3.iherb.cn/cms/banners/suspbanner0605.jpg /></div>",
+                res[0].HtmlLayout);
         }
 
         [Fact]
