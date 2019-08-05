@@ -1,5 +1,7 @@
 ﻿using App.Metrics;
 using App.Metrics.Counter;
+using App.Metrics.Histogram;
+using App.Metrics.Meter;
 using App.Metrics.Timer;
 
 namespace CMS.API.Campaign.Infrastructure.Metric
@@ -22,6 +24,21 @@ namespace CMS.API.Campaign.Infrastructure.Metric
             {
                 Name = name ?? "Request Counter",
                 MeasurementUnit = Unit.Calls
+            };
+        }
+
+        public static HistogramOptions BuildHistogramOptions(string name)
+        {
+            return new HistogramOptions
+            {
+                Name = name ?? "Request Histogram"
+            };
+        }
+        public static MeterOptions BuildMeterOptions(string name)
+        {
+            return new MeterOptions
+            {
+                Name = name ?? "Request Meter"
             };
         }
     }
