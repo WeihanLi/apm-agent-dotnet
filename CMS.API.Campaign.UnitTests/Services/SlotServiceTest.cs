@@ -66,7 +66,7 @@ namespace CMS.API.Campaign.UnitTests.Services
         {
             var res = _slotService.GetSlots("website", "homePagePromo", "AU", "en-US", "", "", "iHerb");
 
-            Assert.Equal("2019-09-01 22:00:00", res[0].EndDate);
+            Assert.Equal("2019-09-01 15:00:00", res[0].EndDate);
         }
     }
 }
