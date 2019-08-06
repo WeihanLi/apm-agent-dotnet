@@ -56,7 +56,7 @@ namespace CMS.API.Campaign.Application.Services
                 result.Add(new SlotInfo()
                 {
                     Id = slot.Id, Title = slot.Title, HtmlLayout = slot.HtmlLayout, Url = slot.LandingUrl,
-                    Subtitle = slot.Subtitle, AltText = slot.AltText, EndDate = UtcTime2PstTime(slot.EndDate)
+                    Subtitle = slot.Subtitle, AltText = slot.AltText, EndDate = UtcTime2PstTime(slot.EndDate).ToString("yyyy-MM-dd HH:mm:ss")
                 });
             }
 
@@ -91,13 +91,24 @@ namespace CMS.API.Campaign.Application.Services
             return countrySpecific.Equals(country, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        private static string UtcTime2PstTime(DateTime utcTime)
+        private static DateTime UtcTime2PstTime(DateTime utcTime)
         {
             var tmpExact = DateTime.ParseExact(utcTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
                 "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             var utc = TimeZoneInfo.ConvertTimeToUtc(tmpExact, TimeZoneInfo.Utc);
-            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc, "Pacific Standard Time")
-                .ToString("yyyy-MM-dd HH:mm:ss");
+            return TimeZoneInfo.ConvertTimeFromUtc(utc, GetPacificStandardTime());
+        }
+
+        private static TimeZoneInfo GetPacificStandardTime()
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
+            }
         }
     }
 }
