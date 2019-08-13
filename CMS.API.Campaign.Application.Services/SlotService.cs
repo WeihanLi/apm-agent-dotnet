@@ -3,6 +3,7 @@ using CMS.API.Campaign.Domain.Repositories;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
@@ -25,10 +26,13 @@ namespace CMS.API.Campaign.Application.Services
             if (string.IsNullOrEmpty(platform) || string.IsNullOrEmpty(location) || string.IsNullOrEmpty(language) ||
                 string.IsNullOrEmpty(store) || string.IsNullOrEmpty(country))
                 return new List<SlotInfo>();
-
+            var stop = new Stopwatch();
+            stop.Start();
             var slots = _slotRepository.GetSlots(platform, location, language, store, preview);
             if (slots == null || slots.Count == 0)
                 return new List<SlotInfo>();
+            stop.Stop();
+            Console.WriteLine($"[SlotService][GetSlots] Get {slots.Count} records from redis, elapsed = {stop.ElapsedMilliseconds}ms.");
 
             var result = new List<SlotInfo>();
 

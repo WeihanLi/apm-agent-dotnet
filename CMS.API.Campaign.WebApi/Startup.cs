@@ -65,8 +65,8 @@ namespace CMS.API.Campaign.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "iHerb CMS Campaign Api"); });
             app.UseResponseCompression();
-            app.UseMvc();
             app.UseResponseCaching();
+            app.UseMvc();
         }
     }
 
@@ -77,8 +77,7 @@ namespace CMS.API.Campaign.WebApi
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddControllersAsServices();
-            services.AddMemoryCache();
-
+           
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
