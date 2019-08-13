@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 namespace CMS.API.Campaign.Domain.Repositories
 {
-    public interface ISlotRepository
+    public interface ICacheRepository
     {
-        List<SlotEntity> GetSlots(string key, bool preview = false);
+        void Set(string key, List<SlotEntity> slots);
+
+        List<SlotEntity> Get(string key);
     }
 }

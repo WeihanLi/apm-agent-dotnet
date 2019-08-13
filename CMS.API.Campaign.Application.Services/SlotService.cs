@@ -13,11 +13,13 @@ namespace CMS.API.Campaign.Application.Services
     {
         private readonly ISlotRepository _slotRepository;
         private readonly SlotImageConfig _imageConfig;
+        private readonly ICacheRepository _cacheRepository;
 
-        public SlotService(ISlotRepository slotRepository, IOptions<SlotImageConfig> config)
+        public SlotService(ISlotRepository slotRepository, IOptions<SlotImageConfig> config, ICacheRepository cacheRepository)
         {
             _slotRepository = slotRepository;
             _imageConfig = config.Value;
+            _cacheRepository = cacheRepository;
         }
 
         public List<SlotInfo> GetSlots(string platform, string location, string country, string language,
@@ -26,14 +28,25 @@ namespace CMS.API.Campaign.Application.Services
             if (string.IsNullOrEmpty(platform) || string.IsNullOrEmpty(location) || string.IsNullOrEmpty(language) ||
                 string.IsNullOrEmpty(store) || string.IsNullOrEmpty(country))
                 return new List<SlotInfo>();
-            var stop = new Stopwatch();
-            stop.Start();
-            var slots = _slotRepository.GetSlots(platform, location, language, store, preview);
-            if (slots == null || slots.Count == 0)
-                return new List<SlotInfo>();
-            stop.Stop();
-            Console.WriteLine($"[SlotService][GetSlots] Get {slots.Count} records from redis, elapsed = {stop.ElapsedMilliseconds}ms.");
 
+            var key = $"{store.ToLower()}-{platform.ToLower()}-{location.ToLower()}-{language.ToLower()}";
+            var slots = _cacheRepository.Get(key);
+            if (slots == null || slots.Count == 0)
+            {
+                var stop = new Stopwatch();
+                stop.Start();
+                slots = _slotRepository.GetSlots(key, preview);
+                stop.Stop();
+                Console.WriteLine($"[SlotService][GetSlots] Read redis, elapsed = {stop.ElapsedMilliseconds}ms.");
+                if (slots.Count > 0)
+                {
+                    _cacheRepository.Set(key, slots);
+                }
+            }
+
+            if (slots.Count == 0)
+                return new List<SlotInfo>();
+            
             var result = new List<SlotInfo>();
 
             foreach (var slot in slots)

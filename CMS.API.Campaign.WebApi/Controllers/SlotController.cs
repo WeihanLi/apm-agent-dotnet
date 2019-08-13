@@ -40,7 +40,6 @@ namespace CMS.API.Campaign.WebApi.Controllers
         /// <param name="categoryId">Optional, Category Code, Example : Pets</param>
         /// <param name="promoId">Optional, Promote ID, Example: 070819WD10915</param>
         /// <param name="store">Optional, default value is iHerb</param>
-        [ResponseCache(Duration = 60)]
         [HttpGet("/api/Slot")]
         public ActionResult<List<SlotInfo>> GetSlots(string platform, string location, string language, string country,
             string categoryId, string promoId, string store)
@@ -68,7 +67,6 @@ namespace CMS.API.Campaign.WebApi.Controllers
         /// <summary>
         /// Get Preview Slots
         /// </summary>
-        [ResponseCache(Duration = 60)]
         [HttpGet("/api/Slot/Preview")]
         public ActionResult<List<SlotInfo>> GetPreviewSlots(string platform, string location, string language, string country,
             string categoryId, string promoId, string store)
