@@ -39,7 +39,7 @@ namespace CMS.API.Campaign.WebApi.Controllers
         /// <param name="categoryId">Optional, Category Code, Example : Pets</param>
         /// <param name="promoId">Optional, Promote ID, Example: 070819WD10915</param>
         /// <param name="store">Optional, default value is iHerb</param>
-        [ResponseCache(Duration = 10)]
+        [ResponseCache(Duration = 60)]
         [HttpGet("/api/Slot")]
         public ActionResult<List<SlotInfo>> GetSlots(string platform, string location, string language, string country,
             string categoryId, string promoId, string store)
@@ -50,13 +50,10 @@ namespace CMS.API.Campaign.WebApi.Controllers
                 using (_metricClient.Timer(methodName))
                 {
                     _metricClient.Counter(methodName);
-                    Console.WriteLine(
-                        $"{methodName} : Request received, platform = {platform}, location = {location}, language = {language}, country = {country}, categoryId = {categoryId}, promoId = {promoId}, store = {store}");
                     if (string.IsNullOrEmpty(store))
                         store = "iHerb";
                     var slots = _slotService.GetSlots(platform, location, country, language, categoryId, promoId,
                         store);
-
                     return slots;
                 }
             }
@@ -70,6 +67,7 @@ namespace CMS.API.Campaign.WebApi.Controllers
         /// <summary>
         /// Get Preview Slots
         /// </summary>
+        [ResponseCache(Duration = 60)]
         [HttpGet("/api/Slot/Preview")]
         public ActionResult<List<SlotInfo>> GetPreviewSlots(string platform, string location, string language, string country,
             string categoryId, string promoId, string store)
@@ -80,13 +78,10 @@ namespace CMS.API.Campaign.WebApi.Controllers
                 using (_metricClient.Timer(methodName))
                 {
                     _metricClient.Counter(methodName);
-                    Console.WriteLine(
-                        $"{methodName} : Request received for Preview, platform = {platform}, location = {location}, language = {language}, country = {country}, categoryId = {categoryId}, promoId = {promoId}, store = {store}");
                     if (string.IsNullOrEmpty(store))
                         store = "iHerb";
                     var slots = _slotService.GetSlots(platform, location, country, language, categoryId, promoId,
                         store, true);
-
                     return slots;
                 }
             }
