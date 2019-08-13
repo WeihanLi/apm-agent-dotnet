@@ -17,7 +17,7 @@ namespace CMS.API.Campaign.UnitTests.Services
         public SlotServiceTest()
         {
             var slotRepository = new Mock<ISlotRepository>();
-            var cacheRepository = new Mock<ICacheRepository>();
+            var cacheRepository = new Mock<ICacheService>();
 
             slotRepository
                 .Setup(x => x.GetSlots(It.IsAny<string>(), false))
@@ -36,7 +36,7 @@ namespace CMS.API.Campaign.UnitTests.Services
                     }
                 });
 
-            cacheRepository.Setup(x => x.Get(It.IsAny<string>())).Returns(new List<SlotEntity>());
+            cacheRepository.Setup(x => x.Get(It.IsAny<string>())).Returns(new List<SlotInfo>());
 
 
             _slotService = new SlotService(slotRepository.Object, new OptionsWrapper<SlotImageConfig>(

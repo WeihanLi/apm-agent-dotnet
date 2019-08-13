@@ -126,7 +126,7 @@ namespace CMS.API.Campaign.WebApi
             services.AddSingleton<ISlotRepository, SlotRepository>();
             services.AddSingleton<IRedisAccess, RedisAccess>();
             services.AddSingleton<IMetricClient, MetricClient>();
-            services.AddSingleton<ICacheRepository, CacheRepository>();
+            services.AddSingleton<ICacheService, CacheService>();
 
             return services;
         }
