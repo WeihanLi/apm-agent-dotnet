@@ -1,4 +1,6 @@
-﻿namespace CMS.API.Campaign.Domain.Entities
+﻿using System;
+
+namespace CMS.API.Campaign.Domain.Entities
 {
     public class SlotEntity
     {
@@ -22,6 +24,6 @@
 
         public string AltText { get; set; }
 
-        public string EndDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

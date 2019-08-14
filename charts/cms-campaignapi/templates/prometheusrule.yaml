@@ -1,0 +1,33 @@
+{{ if .Values.prometheusrule.create }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app: prometheus-operator
+    release: monitoring
+  name: {{ .Values.app_name }}-rules
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: {{ .Values.app_name }}.rules
+    rules:
+    {{- range .Values.prometheusrule.rules }}
+    - alert: {{ $.Values.namespace }}:{{ $.Values.app_name }}:{{ .alert }}
+      annotations:
+        summary: {{ .annotations.summary | default "default alert summary, please update yaml with this info" }}
+        message: {{ .annotations.message | default "default alert message, please update yaml with this info" }}
+        runbook_url: {{ .annotations.runbook_url | default "" }}
+        dashboard_url: {{ .annotations.dashboard_url | default "" }}
+      expr: {{ .expr }}
+      {{- if .for }}
+      for: {{ .for }}
+      {{- end }}
+      labels:
+        {{- if $.Values.namespace }}
+        {{ $.Values.namespace }}: "true"
+        {{- end }}
+        {{- range $key, $val := .labels }}
+        {{ $key }}: {{ $val | quote }}
+        {{- end }}
+    {{- end }}
+{{- end }}

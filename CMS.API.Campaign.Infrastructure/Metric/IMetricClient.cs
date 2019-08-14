@@ -6,5 +6,7 @@ namespace CMS.API.Campaign.Infrastructure.Metric
     {
         TimerContext Timer(string name);
         void Counter(string name);
+        void Histogram(string name, long value);
+        void Meter(string name);
     }
 }
