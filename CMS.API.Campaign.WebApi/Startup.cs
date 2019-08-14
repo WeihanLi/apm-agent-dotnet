@@ -122,11 +122,12 @@ namespace CMS.API.Campaign.WebApi
             IConfiguration configuration)
         {
             services.AddOptions();
-            services.AddSingleton<ISlotService, SlotService>();
-            services.AddSingleton<ISlotRepository, SlotRepository>();
+            
             services.AddSingleton<IRedisAccess, RedisAccess>();
             services.AddSingleton<IMetricClient, MetricClient>();
             services.AddSingleton<ICacheService, CacheService>();
+            services.AddSingleton<ISlotRepository, SlotRepository>();
+            services.AddSingleton<ISlotService, SlotService>();
 
             return services;
         }
