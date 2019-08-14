@@ -15,7 +15,7 @@ namespace CMS.API.Campaign.Application.Services
 
         public void Set(string key, List<SlotInfo> slots)
         {
-            _memoryCache.Set(key, slots, TimeSpan.FromSeconds(60));
+            _memoryCache.Set(key, slots, TimeSpan.FromSeconds(30));
         }
 
         public List<SlotInfo> Get(string key)

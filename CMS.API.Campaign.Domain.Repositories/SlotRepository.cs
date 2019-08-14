@@ -10,11 +10,12 @@ namespace CMS.API.Campaign.Domain.Repositories
 {
     public class SlotRepository : ISlotRepository
     {
-        private readonly IRedisAccess _redisAccess;
+        private readonly IDatabase _db;
 
         public SlotRepository(IRedisAccess redisAccess)
         {
-            _redisAccess = redisAccess;
+            _db = redisAccess.GetDatabase();
+            _db.HashGet("CMS-PreviewCampaigns", "firstAccessKey");
         }
 
         public List<SlotEntity> GetSlots(string key, bool preview = false)
@@ -30,8 +31,7 @@ namespace CMS.API.Campaign.Domain.Repositories
         {
             var stop = new Stopwatch();
             stop.Start();
-            var db = _redisAccess.GetDatabase();
-            var value = db.HashGet(setName, key);
+            var value = _db.HashGet(setName, key);
             stop.Stop();
             Console.WriteLine($"Read from redis by key = {key}, elapsed = {stop.ElapsedMilliseconds}ms.");
             return value.HasValue ? value.ToString() : null;
