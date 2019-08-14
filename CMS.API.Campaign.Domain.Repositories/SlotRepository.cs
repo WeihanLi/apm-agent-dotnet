@@ -1,24 +1,25 @@
-﻿using CMS.API.Campaign.Domain.Entities;
+﻿using System;
+using CMS.API.Campaign.Domain.Entities;
 using CMS.API.Campaign.Infrastructure.Redis;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CMS.API.Campaign.Domain.Repositories
 {
     public class SlotRepository : ISlotRepository
     {
-        private readonly IRedisAccess _redisAccess;
+        private readonly IDatabase _db;
 
         public SlotRepository(IRedisAccess redisAccess)
         {
-            _redisAccess = redisAccess;
+            _db = redisAccess.GetDatabase();
+            _db.HashGet("CMS-PreviewCampaigns", "firstAccessKey");
         }
 
-        public List<SlotEntity> GetSlots(string platform, string location, string language, string store, bool preview = false)
+        public List<SlotEntity> GetSlots(string key, bool preview = false)
         {
-            var key = $"{store.ToLower()}-{platform.ToLower()}-{location.ToLower()}-{language.ToLower()}";
-
             var result = GetValue(preview ? "CMS-PreviewCampaigns" : "CMS-Campaigns", key);
 
             return string.IsNullOrEmpty(result)
@@ -28,8 +29,11 @@ namespace CMS.API.Campaign.Domain.Repositories
 
         private string GetValue(string setName, RedisValue key)
         {
-            var db = _redisAccess.GetDatabase();
-            var value = db.HashGet(setName, key);
+            var stop = new Stopwatch();
+            stop.Start();
+            var value = _db.HashGet(setName, key);
+            stop.Stop();
+            Console.WriteLine($"Read from redis by key = {key}, elapsed = {stop.ElapsedMilliseconds}ms.");
             return value.HasValue ? value.ToString() : null;
         }
     }

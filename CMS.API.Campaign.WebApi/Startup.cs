@@ -4,17 +4,17 @@ using CMS.API.Campaign.Domain.Repositories;
 using CMS.API.Campaign.Infrastructure.Metric;
 using CMS.API.Campaign.Infrastructure.Redis;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
 using System.IO.Compression;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.API.Campaign.WebApi
 {
@@ -65,8 +65,8 @@ namespace CMS.API.Campaign.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "iHerb CMS Campaign Api"); });
             app.UseResponseCompression();
+            
             app.UseMvc();
-            app.UseResponseCaching();
         }
     }
 
@@ -77,15 +77,14 @@ namespace CMS.API.Campaign.WebApi
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddControllersAsServices();
-            services.AddMemoryCache();
-
+           
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
                 options.Providers.Add<GzipCompressionProvider>();
             });
 
-            services.AddResponseCaching();
+            services.AddMemoryCache();
             services.AddMetrics();
 
             return services;
@@ -123,10 +122,12 @@ namespace CMS.API.Campaign.WebApi
             IConfiguration configuration)
         {
             services.AddOptions();
-            services.AddSingleton<ISlotService, SlotService>();
-            services.AddSingleton<ISlotRepository, SlotRepository>();
+            
             services.AddSingleton<IRedisAccess, RedisAccess>();
             services.AddSingleton<IMetricClient, MetricClient>();
+            services.AddSingleton<ICacheService, CacheService>();
+            services.AddSingleton<ISlotRepository, SlotRepository>();
+            services.AddSingleton<ISlotService, SlotService>();
 
             return services;
         }

@@ -5,6 +5,6 @@ namespace CMS.API.Campaign.Domain.Repositories
 {
     public interface ISlotRepository
     {
-        List<SlotEntity> GetSlots(string platform, string location, string language, string store, bool preview = false);
+        List<SlotEntity> GetSlots(string key, bool preview = false);
     }
 }

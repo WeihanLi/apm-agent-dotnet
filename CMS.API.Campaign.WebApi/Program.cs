@@ -42,7 +42,7 @@ namespace CMS.API.Campaign.WebApi
                 .ConfigureMetrics(Metrics)
                 .UseMetricsWebTracking(options =>
                 {
-                    options.IgnoredRoutesRegexPatterns = new[] { "swagger/index.html", "api/hc" };
+                    options.IgnoredRoutesRegexPatterns = new[] { "swagger/index.html", "api/HealthCheck" };
                     options.OAuth2TrackingEnabled = false;
                     options.ApdexTrackingEnabled = true;
                     options.ApdexTSeconds = 0.5;

@@ -40,7 +40,7 @@ namespace CMS.API.Campaign.UnitTests.Repositories
         [Fact]
         public void GetSlots_Test()
         {
-            var res = _slotRepository.GetSlots("website", "homePagePromo", "en-US", "iHerb");
+            var res = _slotRepository.GetSlots("iherb-website-homepagepromo-en-us");
 
             Assert.NotNull(res);
             Assert.True(res.Count>0);

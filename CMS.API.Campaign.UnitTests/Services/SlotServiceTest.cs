@@ -17,10 +17,10 @@ namespace CMS.API.Campaign.UnitTests.Services
         public SlotServiceTest()
         {
             var slotRepository = new Mock<ISlotRepository>();
+            var cacheRepository = new Mock<ICacheService>();
 
             slotRepository
-                .Setup(x => x.GetSlots(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                    false))
+                .Setup(x => x.GetSlots(It.IsAny<string>(), false))
                 .Returns(new List<SlotEntity>()
                 {
                     new SlotEntity()
@@ -35,11 +35,15 @@ namespace CMS.API.Campaign.UnitTests.Services
                         AltText = "big sell", EndDate = DateTime.Parse("2019-09-01 22:00:00")
                     }
                 });
+
+            cacheRepository.Setup(x => x.Get(It.IsAny<string>())).Returns(new List<SlotInfo>());
+
+
             _slotService = new SlotService(slotRepository.Object, new OptionsWrapper<SlotImageConfig>(
                 new SlotImageConfig()
                 {
                     DefaultHeader = "https://s3.images-iherb.com", ChinaHeader = "https://s3.iherb.cn"
-                }));
+                }), cacheRepository.Object);
         }
 
         [Fact]
