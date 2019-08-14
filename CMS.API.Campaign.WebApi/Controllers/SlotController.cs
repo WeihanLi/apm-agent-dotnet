@@ -44,6 +44,8 @@ namespace CMS.API.Campaign.WebApi.Controllers
         public ActionResult<List<SlotInfo>> GetSlots(string platform, string location, string language, string country,
             string categoryId, string promoId, string store)
         {
+            var stop = new Stopwatch();
+            stop.Start();
             var methodName = MethodBase.GetCurrentMethod().Name;
             try
             {
@@ -54,6 +56,8 @@ namespace CMS.API.Campaign.WebApi.Controllers
                         store = "iHerb";
                     var slots = _slotService.GetSlots(platform, location, country, language, categoryId, promoId,
                         store);
+                    stop.Stop();
+                    Console.WriteLine($"[SlotController][GetSlots] Return {slots.Count} records, elapsed = {stop.ElapsedMilliseconds}ms, {stop.ElapsedTicks}ts.");
                     return slots;
                 }
             }

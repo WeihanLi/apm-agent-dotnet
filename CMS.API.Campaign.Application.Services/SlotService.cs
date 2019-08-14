@@ -66,11 +66,11 @@ namespace CMS.API.Campaign.Application.Services
                 if (!IsCountryInSpecific(slot.CountrySpecific, country))
                     continue;
 
-                if (!string.IsNullOrEmpty(categoryId) &&
+                if (!string.IsNullOrEmpty(categoryId) && !string.IsNullOrEmpty(slot.CategoryId) &&
                     !slot.CategoryId.Equals(categoryId, StringComparison.CurrentCultureIgnoreCase))
                     continue;
 
-                if (!string.IsNullOrEmpty(promoId) &&
+                if (!string.IsNullOrEmpty(promoId) && !string.IsNullOrEmpty(slot.PromoCode) &&
                     !slot.PromoCode.Equals(promoId, StringComparison.CurrentCultureIgnoreCase))
                     continue;
 
