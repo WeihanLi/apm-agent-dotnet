@@ -49,12 +49,12 @@ service:
 ingress:
   create: true
   rules:
-    - host: campaign.internal.iherbtest.cn
+    - host: campaign.internal.iherbtest.io
       backends:
         - path: /
   secrets:
-    - host: campaign.internal.iherbtest.cn
-      secret: ssl-iherbtest-cn
+    - host: campaign.internal.iherbtest.io
+      secret: 
 
 monitor:
   create: true
