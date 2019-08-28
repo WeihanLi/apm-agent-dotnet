@@ -28,14 +28,14 @@ deployment:
     timeout_seconds: 1
   resources:
     limits:
-      cpu: 400m
-      memory: 800Mi
+      cpu: 800m
+      memory: 1000Mi
     requests:
       cpu: 400m
       memory: 800Mi
 
 hpa:
-  min: 4
+  min: 2
   max: 4
   kind: Deployment
   cpu_utilization: 80
