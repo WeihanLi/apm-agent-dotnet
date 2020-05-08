@@ -12,7 +12,7 @@ tasks:
 
   - name: codescan
     kind: Sonarqube-Dotnet
-    project: CMS.CampaignApi
+    project: cms.api.campaign
     solution: ./CMS.API.Campaign.sln
     analysisOptions:
       - key: sonar.cs.opencover.reportsPaths
