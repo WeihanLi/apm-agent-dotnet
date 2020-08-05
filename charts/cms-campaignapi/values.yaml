@@ -7,7 +7,8 @@ deployment:
   replicas: 1
   image:
     pull_policy: IfNotPresent
-    pull_secret: hs-reg-iherb-net-svc-k8sdeploy-hs
+    pull_secret: jfrog-authenticate
+    #pull_secret: hs-reg-iherb-net-svc-k8sdeploy-hs
   http:
     port: 80
     container_port: 80
@@ -27,15 +28,15 @@ deployment:
     timeout_seconds: 1
   resources:
     limits:
-      cpu: 100m
-      memory: 300Mi
+      cpu: 800m
+      memory: 1000Mi
     requests:
-      cpu: 100m
-      memory: 300Mi
+      cpu: 200m
+      memory: 400Mi
 
 hpa:
-  min: 1
-  max: 1
+  min: 2
+  max: 4
   kind: Deployment
   cpu_utilization: 80
   
@@ -49,12 +50,12 @@ service:
 ingress:
   create: true
   rules:
-    - host: campaign.internal.iherbtest.cn
+    - host: campaign.internal.iherbtest.io
       backends:
         - path: /
   secrets:
-    - host: campaign.internal.iherbtest.cn
-      secret: ssl-iherbtest-cn
+    - host: campaign.internal.iherbtest.io
+      secret: 
 
 monitor:
   create: true

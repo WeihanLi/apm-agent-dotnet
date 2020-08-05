@@ -11,3 +11,14 @@ tasks:
       - export TEST_NAME=CMS.API.Campaign.UnitTests/CMS.API.Campaign.UnitTests.csproj
       - dotnet test $TEST_NAME
     timeout: 600m  
+    
+  - name: codescan
+    kind: Sonarqube-Dotnet
+    project: cms.api.campaign
+    solution: ./CMS.API.Campaign.sln
+    analysisOptions:
+      - key: sonar.cs.opencover.reportsPaths
+        value: "./TestResult/TR-*.xml"
+      - key: sonar.coverage.exclusions
+        value: "**Test*.cs, **Startup.cs, **Program.cs"
+          
