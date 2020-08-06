@@ -4,6 +4,7 @@ EXPOSE 80
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
+COPY NuGet.Config ./
 COPY ["CMS.API.Campaign.WebApi/CMS.API.Campaign.WebApi.csproj", "CMS.API.Campaign.WebApi/"]
 RUN dotnet restore "CMS.API.Campaign.WebApi/CMS.API.Campaign.WebApi.csproj"
 COPY . .
