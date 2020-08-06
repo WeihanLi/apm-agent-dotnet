@@ -1,8 +1,13 @@
-﻿using CMS.API.Campaign.Application.Models;
+﻿using AutoMapper;
+using CMS.API.Campaign.Application.Models;
 using CMS.API.Campaign.Application.Services;
 using CMS.API.Campaign.Domain.Repositories;
 using CMS.API.Campaign.Infrastructure.Metric;
 using CMS.API.Campaign.Infrastructure.Redis;
+using CMS.API.Campaign.WebApi.Requests;
+using CMS.API.Campaign.WebApi.Util;
+using CMS.API.Campaign.WebApi.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -84,6 +89,8 @@ namespace CMS.API.Campaign.WebApi
                 options.Providers.Add<GzipCompressionProvider>();
             });
 
+            var profiles = new Type[] { typeof(AutomapperProfile) };
+            services.AddAutoMapper(profiles);
             services.AddMemoryCache();
             services.AddMetrics();
 
@@ -128,7 +135,9 @@ namespace CMS.API.Campaign.WebApi
             services.AddSingleton<ICacheService, CacheService>();
             services.AddSingleton<ISlotRepository, SlotRepository>();
             services.AddSingleton<ISlotService, SlotService>();
+            services.AddSingleton<IBannerService, BannerService>();
 
+            services.AddTransient<IValidator<GetBannerSummariesRequest>, GetCampaignBannersRequestValidator>();
             return services;
         }
 
