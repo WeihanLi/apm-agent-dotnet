@@ -3,5 +3,6 @@
     public class RedisConfig
     {
         public string ConnectionString { get; set; }
+        public string CampaignBannerSetName { get; set; }
     }
 }

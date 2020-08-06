@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CMS.API.Campaign.Domain\CMS.API.Campaign.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
