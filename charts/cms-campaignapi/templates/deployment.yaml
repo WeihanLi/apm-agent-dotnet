@@ -23,15 +23,10 @@ spec:
   template:
     metadata:
       {{- if .Values.deployment.additional_annotations }}
-
       annotations:
-
         {{- range $key, $val := .Values.deployment.additional_annotations }}
-
         {{ $key }}: {{ $val | quote}}
-
         {{- end }}
-
       {{- end }}
       
       labels:
