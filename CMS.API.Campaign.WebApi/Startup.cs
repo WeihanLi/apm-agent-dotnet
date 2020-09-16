@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using CMS.API.Campaign.Application.Models;
 using CMS.API.Campaign.Application.Services;
-using CMS.API.Campaign.Domain.Repositories;
 using CMS.API.Campaign.Infrastructure.Metric;
 using CMS.API.Campaign.Infrastructure.Redis;
 using CMS.API.Campaign.WebApi.Requests;
@@ -70,7 +68,7 @@ namespace CMS.API.Campaign.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "iHerb CMS Campaign Api"); });
             app.UseResponseCompression();
-            
+
             app.UseMvc();
         }
     }
@@ -82,7 +80,7 @@ namespace CMS.API.Campaign.WebApi
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddControllersAsServices();
-           
+
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
@@ -129,12 +127,10 @@ namespace CMS.API.Campaign.WebApi
             IConfiguration configuration)
         {
             services.AddOptions();
-            
+
             services.AddSingleton<IRedisAccess, RedisAccess>();
             services.AddSingleton<IMetricClient, MetricClient>();
             services.AddSingleton<ICacheService, CacheService>();
-            services.AddSingleton<ISlotRepository, SlotRepository>();
-            services.AddSingleton<ISlotService, SlotService>();
             services.AddSingleton<IBannerService, BannerService>();
 
             services.AddTransient<IValidator<GetBannerSummariesRequest>, GetCampaignBannersRequestValidator>();
@@ -145,7 +141,6 @@ namespace CMS.API.Campaign.WebApi
             IConfiguration configuration)
         {
             services.Configure<RedisConfig>(configuration.GetSection("RedisConfig"));
-            services.Configure<SlotImageConfig>(configuration.GetSection("SlotImageConfig"));
             services.Configure<GzipCompressionProviderOptions>(options =>
             {
                 options.Level = CompressionLevel.Optimal;

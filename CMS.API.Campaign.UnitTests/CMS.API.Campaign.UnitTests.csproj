@@ -24,4 +24,10 @@
     <ProjectReference Include="..\CMS.API.Campaign.WebApi\CMS.API.Campaign.WebApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

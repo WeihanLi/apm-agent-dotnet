@@ -1,7 +1,5 @@
-﻿using CMS.API.Campaign.Application.Models;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using System;
-using System.Collections.Generic;
 
 namespace CMS.API.Campaign.Application.Services
 {
@@ -15,16 +13,6 @@ namespace CMS.API.Campaign.Application.Services
         public CacheService(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
-        }
-
-        public void Set(string key, List<SlotInfo> slots)
-        {
-            _memoryCache.Set(key, slots, TimeSpan.FromSeconds(30));
-        }
-
-        public List<SlotInfo> Get(string key)
-        {
-            return _memoryCache.Get<List<SlotInfo>>(key);
         }
 
         public T GetOrSet<T>(string entry, Func<T> factory, int cacheSize = 1,

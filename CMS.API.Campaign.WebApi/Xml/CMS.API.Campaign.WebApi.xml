@@ -4,33 +4,6 @@
         <name>CMS.API.Campaign.WebApi</name>
     </assembly>
     <members>
-        <member name="T:CMS.API.Campaign.WebApi.Controllers.SlotController">
-            <summary>
-            slot api for campaigns
-            </summary>
-        </member>
-        <member name="M:CMS.API.Campaign.WebApi.Controllers.SlotController.#ctor(CMS.API.Campaign.Infrastructure.Metric.IMetricClient,CMS.API.Campaign.Application.Services.ISlotService)">
-            <summary>
-            initialize
-            </summary>
-        </member>
-        <member name="M:CMS.API.Campaign.WebApi.Controllers.SlotController.GetSlots(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
-            <summary>
-            Get campaigns for one slot with conditions
-            </summary>
-            <param name="platform">Required, Should be one of "website, mobile, app"</param>
-            <param name="location">Required, Location of Slot, Example: HomepageCategory</param>
-            <param name="language">Required, Language Code, Example: en-US</param>
-            <param name="country">Required, Country Code, Example : US</param>
-            <param name="categoryId">Optional, Category Code, Example : Pets</param>
-            <param name="promoId">Optional, Promote ID, Example: 070819WD10915</param>
-            <param name="store">Optional, default value is iHerb</param>
-        </member>
-        <member name="M:CMS.API.Campaign.WebApi.Controllers.SlotController.GetPreviewSlots(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
-            <summary>
-            Get Preview Slots
-            </summary>
-        </member>
         <member name="T:CMS.API.Campaign.WebApi.Program">
             <summary>
             main class
