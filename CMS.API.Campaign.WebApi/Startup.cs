@@ -2,10 +2,12 @@
 using CMS.API.Campaign.Application.Services;
 using CMS.API.Campaign.Infrastructure.Metric;
 using CMS.API.Campaign.Infrastructure.Redis;
+using CMS.API.Campaign.WebApi.Controllers;
 using CMS.API.Campaign.WebApi.Requests;
 using CMS.API.Campaign.WebApi.Util;
 using CMS.API.Campaign.WebApi.Validators;
 using FluentValidation;
+using iHerb.CMS.Cache.Redis.Extension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -116,8 +118,8 @@ namespace CMS.API.Campaign.WebApi
                     Description = "The CMS Campaign http api for web/mobile/app",
                     TermsOfService = "Terms Of Service"
                 });
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, "Xml/CMS.API.Campaign.WebApi.xml");
-                options.IncludeXmlComments(xmlPath);
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{typeof(BannerController).Assembly.GetName().Name}.xml");
+                options.IncludeXmlComments(xmlPath, true);
             });
 
             return services;
@@ -134,6 +136,17 @@ namespace CMS.API.Campaign.WebApi
             services.AddSingleton<IBannerService, BannerService>();
 
             services.AddTransient<IValidator<GetBannerSummariesRequest>, GetCampaignBannersRequestValidator>();
+
+            services.AddRedisCache<CampaignSubscriptionConverter>(config =>
+            {
+                config.RedisConfig = new iHerb.CMS.Cache.Redis.Model.RedisConfig()
+                {
+                    Host = configuration["RedisConfig:ConnectionString"],
+                };
+                config.KeyPrefix = configuration["RedisConfig:CampaignBannerSetName"];
+                config.SubscribeChannel = $"{configuration["RedisConfig:CampaignBannerSetName"]}-Channel";
+            });
+
             return services;
         }
 

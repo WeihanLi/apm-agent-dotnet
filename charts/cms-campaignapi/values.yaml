@@ -21,7 +21,7 @@ deployment:
     timeout_seconds: 1
   readiness:
     failure_threshold: 3
-    path: /api/HealthCheck
+    path: /api/checks/readiness
     initial_delay_seconds: 60
     period_seconds: 60
     success_threshold: 1
