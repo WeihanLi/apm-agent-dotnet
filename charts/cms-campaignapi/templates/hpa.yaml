@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
@@ -12,7 +12,10 @@ spec:
   maxReplicas: {{ .Values.hpa.max }}
   minReplicas: {{ .Values.hpa.min }}
   scaleTargetRef:
-    apiVersion: extensions/v1beta1
+    apiVersion: apps/v1
     kind: {{ .Values.hpa.kind }}
     name: {{ .Values.app_name }}
-  targetCPUUtilizationPercentage: {{ .Values.hpa.cpu_utilization }}
+  metrics:
+  {{- if .Values.hpa.metrics }}
+  {{ toYaml .Values.hpa.metrics | indent 4 }}
+  {{- end }}
