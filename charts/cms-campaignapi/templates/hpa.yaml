@@ -16,6 +16,6 @@ spec:
     kind: {{ .Values.hpa.kind }}
     name: {{ .Values.app_name }}
   metrics:
-  {{- if .Values.hpa.metrics }}
-  {{ toYaml .Values.hpa.metrics | indent 4 }}
-  {{- end }}
+{{- if .Values.hpa.metrics }}
+{{ toYaml .Values.hpa.metrics | indent 4 }}
+{{- end }}
