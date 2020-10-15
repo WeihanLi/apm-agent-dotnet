@@ -35,19 +35,10 @@ deployment:
       memory: 400Mi
 
 hpa:
-  enabled: true
   min: 2
   max: 4
   kind: Deployment
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 80
-  - type: Resource
-    resource:
-      name: memory
-      targetAverageUtilization: 80
+  cpu_utilization: 80
 
 service:
   type: ClusterIP
