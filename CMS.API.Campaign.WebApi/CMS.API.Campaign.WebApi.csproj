@@ -6,8 +6,9 @@
     <UserSecretsId>e379da0a-69d3-4eb1-9f57-941f1d3405cb</UserSecretsId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>Xml\CMS.API.Campaign.WebApi.xml</DocumentationFile>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,10 +27,5 @@
     <ProjectReference Include="..\CMS.API.Campaign.Infrastructure\CMS.API.Campaign.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Xml\CMS.API.Campaign.WebApi.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
 </Project>
