@@ -5,7 +5,6 @@ using CMS.API.Campaign.Infrastructure.Redis;
 using iHerb.CMS.Cache.Redis;
 using Microsoft.Extensions.Options;
 using Moq;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -15,7 +14,7 @@ namespace CMS.API.Campaign.UnitTests.Services
     public class BannerServiceTest
     {
         private readonly IBannerService _bannerService;
-        private readonly Mock<IRedisCache> _redisMock = new Mock<IRedisCache>();
+        private readonly Mock<IRedisCache<List<BannerSummary>>> _redisMock = new Mock<IRedisCache<List<BannerSummary>>>();
 
         public BannerServiceTest()
         {
@@ -53,9 +52,9 @@ namespace CMS.API.Campaign.UnitTests.Services
             };
             //
             _redisMock.Setup(x => x.GetCache(It.Is<string>(s => !string.IsNullOrEmpty(s)), It.IsAny<string>()))
-                .Returns((string)null);
+                .Returns((List<BannerSummary>)null);
             _redisMock.Setup(x => x.GetCache(It.Is<string>(s => !string.IsNullOrEmpty(s)), It.IsAny<string>()))
-                .Returns(JsonConvert.SerializeObject(banners));
+                .Returns(banners);
 
             _bannerService = new BannerService(_redisMock.Object, Options.Create(new RedisConfig()
             {
