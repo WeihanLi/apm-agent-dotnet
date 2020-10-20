@@ -1,5 +1,7 @@
-﻿using iHerb.CMS.Cache.Redis;
+﻿using CMS.API.Campaign.Application.Models;
+using iHerb.CMS.Cache.Redis;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace CMS.API.Campaign.WebApi.Controllers
 {
@@ -7,9 +9,9 @@ namespace CMS.API.Campaign.WebApi.Controllers
     [ApiController]
     public class HealthController : ControllerBase
     {
-        private readonly IRedisCache _redisCache;
+        private readonly IRedisCache<List<BannerSummary>> _redisCache;
 
-        public HealthController(IRedisCache redisCache)
+        public HealthController(IRedisCache<List<BannerSummary>> redisCache)
         {
             _redisCache = redisCache;
         }

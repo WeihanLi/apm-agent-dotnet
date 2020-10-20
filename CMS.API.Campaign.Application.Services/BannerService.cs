@@ -4,7 +4,6 @@ using CMS.API.Campaign.Infrastructure.Common;
 using CMS.API.Campaign.Infrastructure.Redis;
 using iHerb.CMS.Cache.Redis;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +12,10 @@ namespace CMS.API.Campaign.Application.Services
 {
     public class BannerService : IBannerService
     {
-        private readonly IRedisCache _redisCache;
+        private readonly IRedisCache<List<BannerSummary>> _redisCache;
         private readonly string _campaignBannerSetName;
 
-        public BannerService(IRedisCache redisCache, IOptions<RedisConfig> redisOptions)
+        public BannerService(IRedisCache<List<BannerSummary>> redisCache, IOptions<RedisConfig> redisOptions)
         {
             _redisCache = redisCache;
             _campaignBannerSetName = redisOptions.Value.CampaignBannerSetName;
@@ -26,10 +25,7 @@ namespace CMS.API.Campaign.Application.Services
         {
             var cacheEntry = GetCampaignBannerSetKey(campaignBannerDto.Page ?? -1, campaignBannerDto.Platform ?? -1, campaignBannerDto.Module, campaignBannerDto.Language);
             var result = _redisCache.GetCache(_campaignBannerSetName, cacheEntry);
-            var bannerSummaries = string.IsNullOrEmpty(result)
-                ? new List<BannerSummary>()
-                : JsonConvert.DeserializeObject<List<BannerSummary>>(result);
-            return FilterBannerSummaryListByDateAndOptionalParam(bannerSummaries, campaignBannerDto.Store,
+            return FilterBannerSummaryListByDateAndOptionalParam(result, campaignBannerDto.Store,
                 campaignBannerDto.Country, campaignBannerDto.CategoryId, null);
         }
 
@@ -40,6 +36,9 @@ namespace CMS.API.Campaign.Application.Services
 
         private static List<BannerSummary> FilterBannerSummaryListByDateAndOptionalParam(List<BannerSummary> bannerSummaries, StoreIdEnum? store, string country, string categoryId, int? promoId)
         {
+            if (bannerSummaries == null || bannerSummaries.Count == 0)
+                return bannerSummaries ?? new List<BannerSummary>();
+
             var query = from bs in bannerSummaries
                         where bs.StartDate < DateTime.Now && bs.EndDate > DateTime.Now
                         select bs;
