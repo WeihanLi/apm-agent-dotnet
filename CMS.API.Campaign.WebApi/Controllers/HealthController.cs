@@ -32,8 +32,7 @@ namespace CMS.API.Campaign.WebApi.Controllers
         [HttpGet]
         public IActionResult Readiness()
         {
-            var ready = _redisCache.Readiness();
-            if (ready)
+            if (_redisCache.Readiness())
             {
                 return Ok();
             }
