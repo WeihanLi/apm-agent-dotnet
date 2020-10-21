@@ -36,8 +36,11 @@ namespace CMS.API.Campaign.Application.Services
 
         private static List<BannerSummary> FilterBannerSummaryListByDateAndOptionalParam(List<BannerSummary> bannerSummaries, StoreIdEnum? store, string country, string categoryId, int? promoId)
         {
-            if (bannerSummaries == null || bannerSummaries.Count == 0)
-                return bannerSummaries ?? new List<BannerSummary>();
+            if (bannerSummaries == null)
+                return new List<BannerSummary>();
+
+            if (bannerSummaries.Count == 0)
+                return bannerSummaries;
 
             var query = from bs in bannerSummaries
                         where bs.StartDate < DateTime.Now && bs.EndDate > DateTime.Now
