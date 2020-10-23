@@ -2,8 +2,8 @@
 using App.Metrics.AspNetCore;
 using App.Metrics.Formatters;
 using App.Metrics.Formatters.Prometheus;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace CMS.API.Campaign.WebApi
 {
@@ -16,6 +16,7 @@ namespace CMS.API.Campaign.WebApi
         /// metrics
         /// </summary>
         public static IMetricsRoot Metrics { get; set; }
+
         /// <summary>
         /// main point
         /// </summary>
@@ -30,35 +31,43 @@ namespace CMS.API.Campaign.WebApi
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateWebHostBuilder(string[] args)
         {
             Metrics = AppMetrics.CreateDefaultBuilder()
                 .OutputMetrics.AsPrometheusPlainText()
                 .OutputMetrics.AsPrometheusProtobuf()
                 .Build();
 
-            return WebHost
+            return Host
                 .CreateDefaultBuilder(args)
-                .ConfigureMetrics(Metrics)
-                .UseMetricsWebTracking(options =>
+                .ConfigureWebHostDefaults(builder =>
                 {
-                    options.IgnoredRoutesRegexPatterns = new[] { "swagger/index.html", "api/HealthCheck" };
-                    options.OAuth2TrackingEnabled = false;
-                    options.ApdexTrackingEnabled = true;
-                    options.ApdexTSeconds = 0.5;
-                    options.IgnoredHttpStatusCodes = new[] { 404 };
+                    builder
+                        .ConfigureMetrics(Metrics)
+                        .UseMetricsWebTracking(options =>
+                        {
+                            options.IgnoredRoutesRegexPatterns = new[] { "swagger/index.html", "api/HealthCheck", "api/checks/readiness" };
+                            options.OAuth2TrackingEnabled = false;
+                            options.ApdexTrackingEnabled = true;
+                            options.ApdexTSeconds = 0.5;
+                            options.IgnoredHttpStatusCodes = new[] { 404 };
+                        })
+                        .UseMetrics(options =>
+                        {
+                            options.EndpointOptions = endpointsOptions =>
+                            {
+                                endpointsOptions.MetricsTextEndpointOutputFormatter =
+                                    Metrics.OutputMetricsFormatters.GetType(
+                                        typeof(MetricsPrometheusTextOutputFormatter));
+                                endpointsOptions.MetricsEndpointOutputFormatter =
+                                    Metrics.OutputMetricsFormatters.GetType(
+                                        typeof(MetricsPrometheusProtobufOutputFormatter));
+                            };
+                        })
+                        .UseStartup<Startup>()
+                        ;
                 })
-                .UseMetrics(options =>
-                {
-                    options.EndpointOptions = endpointsOptions =>
-                    {
-                        endpointsOptions.MetricsTextEndpointOutputFormatter =
-                            Metrics.OutputMetricsFormatters.GetType(typeof(MetricsPrometheusTextOutputFormatter));
-                        endpointsOptions.MetricsEndpointOutputFormatter =
-                            Metrics.OutputMetricsFormatters.GetType(typeof(MetricsPrometheusProtobufOutputFormatter));
-                    };
-                })
-                .UseStartup<Startup>();
+                ;
         }
     }
 }

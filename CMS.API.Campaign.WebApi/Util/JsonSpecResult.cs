@@ -8,50 +8,35 @@ namespace CMS.API.Campaign.WebApi.Util
 {
     public class JsonSpecResult<T> : IActionResult
     {
-        private readonly JsonSpecDto _result;
-        private int? _statusCode;
+        public int StatusCode { get; }
 
-        public int? StatusCode
-        {
-            get
-            {
-                return _statusCode;
-            }
-        }
-
-        public JsonSpecDto Result
-        {
-            get
-            {
-                return _result;
-            }
-        }
+        public JsonSpecDto Result { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="jsonDto">Throw Exception if content is null</param>
+        /// <param name="statusCode">statusCode</param>
         public JsonSpecResult(JsonSpecDto jsonDto, int statusCode = (int)HttpStatusCode.OK)
         {
-            _result = jsonDto ?? throw new ArgumentNullException(nameof(jsonDto));
-            _statusCode = statusCode;
+            Result = jsonDto ?? throw new ArgumentNullException(nameof(jsonDto));
+            StatusCode = statusCode;
         }
 
         public JsonSpecResult(string errorMessage, int statusCode = (int)HttpStatusCode.InternalServerError)
         {
-            _result = new JsonSpecDto()
+            Result = new JsonSpecDto()
             {
                 Error = new List<string> { errorMessage }
             };
-            _statusCode = statusCode;
+            StatusCode = statusCode;
         }
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            var jsonResult = new JsonResult("")
+            var jsonResult = new JsonResult(Result)
             {
-                StatusCode = _statusCode,
-                Value = _result
+                StatusCode = StatusCode
             };
 
             await jsonResult.ExecuteResultAsync(context);
