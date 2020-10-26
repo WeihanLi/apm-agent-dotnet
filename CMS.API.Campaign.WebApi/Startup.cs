@@ -11,12 +11,12 @@ using iHerb.CMS.Cache.Redis.Extension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -56,7 +56,7 @@ namespace CMS.API.Campaign.WebApi
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -71,7 +71,11 @@ namespace CMS.API.Campaign.WebApi
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "iHerb CMS Campaign Api"); });
             app.UseResponseCompression();
 
-            app.UseMvc();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 
@@ -79,9 +83,10 @@ namespace CMS.API.Campaign.WebApi
     {
         public static IServiceCollection AddCustomMvc(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddControllersAsServices();
+            services.AddControllers()
+                .AddNewtonsoftJson()
+                .AddControllersAsServices()
+                ;
 
             services.AddResponseCompression(options =>
             {
@@ -110,13 +115,12 @@ namespace CMS.API.Campaign.WebApi
         {
             services.AddSwaggerGen(options =>
             {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Info
+                options.SchemaFilter<EnumSchemaFilter>();
+                options.SwaggerDoc("v1", new OpenApiInfo()
                 {
                     Title = "iHerb CMS Campaign Api",
                     Version = "v1",
                     Description = "The CMS Campaign http api for web/mobile/app",
-                    TermsOfService = "Terms Of Service"
                 });
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{typeof(BannerController).Assembly.GetName().Name}.xml");
                 options.IncludeXmlComments(xmlPath, true);

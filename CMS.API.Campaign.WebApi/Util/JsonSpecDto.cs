@@ -3,24 +3,26 @@
 namespace CMS.API.Campaign.WebApi.Util
 {
     /// <summary>
-    /// Follow with jsonapi top level spec
+    /// Follow with json api top level spec
+    /// https://jsonapi.org/format/#document-top-level
     /// </summary>
-    /// <see cref="https://jsonapi.org/format/#document-top-level"/>
     public class JsonSpecDto<T>
     {
         /// <summary>
         /// the document’s “primary data”
         /// </summary>
         public T Data { get; set; }
+
         /// <summary>
         /// an array of error objects
+        /// https://jsonapi.org/format/#errors
         /// </summary>
-        /// <see cref="https://jsonapi.org/format/#errors"/>
         public List<string> Error { get; set; }
+
         /// <summary>
         /// a meta object that contains non-standard meta-information.
+        /// https://jsonapi.org/format/#document-meta
         /// </summary>
-        /// <see cref="https://jsonapi.org/format/#document-meta"/>
         public object Meta { get; set; }
 
         public JsonSpecDto()
@@ -32,24 +34,26 @@ namespace CMS.API.Campaign.WebApi.Util
     }
 
     /// <summary>
-    /// Follow with jsonapi top level spec
+    /// Follow with json api top level spec
+    /// https://jsonapi.org/format/#document-top-level
     /// </summary>
-    /// <see cref="https://jsonapi.org/format/#document-top-level"/>
     public class JsonSpecDto
     {
         /// <summary>
         /// the document’s “primary data”
         /// </summary>
         public object Data { get; set; }
+
         /// <summary>
         /// an array of error objects
+        /// https://jsonapi.org/format/#errors
         /// </summary>
-        /// <see cref="https://jsonapi.org/format/#errors"/>
         public List<string> Error { get; set; }
+
         /// <summary>
         /// a meta object that contains non-standard meta-information.
+        /// https://jsonapi.org/format/#document-meta
         /// </summary>
-        /// <see cref="https://jsonapi.org/format/#document-meta"/>
         public object Meta { get; set; }
 
         public JsonSpecDto()
