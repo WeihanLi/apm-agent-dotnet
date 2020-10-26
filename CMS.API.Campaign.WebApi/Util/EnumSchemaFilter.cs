@@ -2,22 +2,24 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CMS.API.Campaign.WebApi.Util
 {
     /// <summary>
     /// https://stackoverflow.com/questions/36452468/swagger-ui-web-api-documentation-present-enums-as-strings
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class EnumSchemaFilter : ISchemaFilter
     {
-        public void Apply(OpenApiSchema model, SchemaFilterContext context)
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
             if (context.Type.IsEnum)
             {
-                model.Enum.Clear();
+                schema.Enum.Clear();
                 foreach (var name in Enum.GetNames(context.Type))
                 {
-                    model.Enum.Add(new OpenApiString($"{name}"));
+                    schema.Enum.Add(new OpenApiString($"{name}"));
                 }
             }
         }
