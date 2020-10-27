@@ -18,6 +18,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 
@@ -67,8 +68,23 @@ namespace CMS.API.Campaign.WebApi
             {
                 Predicate = r => r.Name.Contains("self")
             });
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "iHerb CMS Campaign Api"); });
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((swagger, httpReq) =>
+                {
+                    if (swagger.Servers.Count > 0)
+                    {
+                        swagger.Servers = new List<OpenApiServer>
+                        {
+                            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
+                        };
+                    }
+                });
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "iHerb CMS Campaign Api");
+            });
             app.UseResponseCompression();
 
             app.UseRouting();
@@ -115,7 +131,7 @@ namespace CMS.API.Campaign.WebApi
         {
             services.AddSwaggerGen(options =>
             {
-                options.SchemaFilter<EnumSchemaFilter>();
+                options.DocumentFilter<EnumDescriptionDocumentFilter>();
                 options.SwaggerDoc("v1", new OpenApiInfo()
                 {
                     Title = "iHerb CMS Campaign Api",
@@ -125,6 +141,7 @@ namespace CMS.API.Campaign.WebApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{typeof(BannerController).Assembly.GetName().Name}.xml");
                 options.IncludeXmlComments(xmlPath, true);
             });
+            services.AddSwaggerGenNewtonsoftSupport();
 
             return services;
         }
