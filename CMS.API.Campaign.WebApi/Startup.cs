@@ -144,7 +144,6 @@ namespace CMS.API.Campaign.WebApi
         {
             services.AddOptions();
 
-            services.AddSingleton<IRedisAccess, RedisAccess>();
             services.AddSingleton<IMetricClient, MetricClient>();
             services.AddSingleton<ICacheService, CacheService>();
             services.AddSingleton<IBannerService, BannerService>();

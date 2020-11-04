@@ -3,13 +3,16 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace CMS.API.Campaign.WebApi.Util
 {
     /// <summary>
-    /// Add Enum Description for
+    /// Add Enum Description for swagger
+    /// https://stackoverflow.com/questions/36452468/swagger-ui-web-api-documentation-present-enums-as-strings
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class EnumDescriptionDocumentFilter : IDocumentFilter
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
